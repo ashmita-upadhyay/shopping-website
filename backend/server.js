@@ -1,12 +1,13 @@
+
 import express from "express";
-import cors from "cors"
+import cors from "cors";
 
-const app = express()
+const app = express();
 
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
-const PORT = 5000
+const PORT = process.env.PORT || 5000;
 
 app.get("/api/products", async (req, res) => {
   try {
@@ -23,10 +24,17 @@ app.get("/api/products", async (req, res) => {
     );
 
     const results = await Promise.all(
-      responses.map((response) => response.json())
+      responses.map(async (response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        return response.json();
+      })
     );
 
-    const products = results.flatMap((result) => result.products);
+    const products = results.flatMap(
+      (result) => result.products
+    );
 
     res.json({
       total: products.length,
@@ -34,13 +42,12 @@ app.get("/api/products", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-
     res.status(500).json({
       message: "Unable to fetch products",
     });
   }
 });
 
-app.listen(PORT,() =>{
-   console.log(`server is running at http:localhost:${PORT}`)
-})
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
