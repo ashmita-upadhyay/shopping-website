@@ -18,7 +18,7 @@ type ProductsProps = {
   setSearch: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const API = "http://localhost:5000/api/products";
+const API = "https://shopping-website-05vm.onrender.com/api/products";
 
 type Category = "all" | "men" | "women" | "children";
 
